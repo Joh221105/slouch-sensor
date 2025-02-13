@@ -61,4 +61,31 @@ void loop() {
       longPressDetected = false;
     }
 }
+ if (initialized) {
+        checkSlouch();    // if initialization is complete, checks if the user is slouching
+    }
+    delay(500);
 }
+
+void recordStraightPosture() {
+    getMPUData(straight_x, straight_y, straight_z);    // retrieves and updates straight xyz values
+}
+
+void recordSlouchPosture() {
+    getMPUData(slouch_x, slouch_y, slouch_z);    // retrieves and updates slouch xyz values
+}
+
+float calculateThreshold() {                        // calculates threshold angle, addw weight to directions more affected by slouching posture
+    return (2.0 * abs(straight_x - slouch_x)) + 
+           (1.0 * abs(straight_y - slouch_y)) + 
+           (0.5 * abs(straight_z - slouch_z));
+}
+
+void getMPUData(float &x, float &y, float &z) {
+    int16_t ax, ay, az;
+    mpu.getAcceleration(&ax, &ay, &az);      // retrieves and calculates angle in degrees for x y and z
+    x = atan2(ay, az) * 180 / PI;
+    y = atan2(ax, az) * 180 / PI;
+    z = atan2(ax, ay) * 180 / PI;
+}
+

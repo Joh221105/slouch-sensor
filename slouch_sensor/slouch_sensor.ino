@@ -35,14 +35,30 @@ void setup() {
 }
 
 void loop() {
-    if (digitalRead(buttonPin) == LOW) {  
-        if (!buttonState) {
-            buttonState = true;     // acknowledges button press, prevents multiple actions from one button press
-            pressStartTime = millis();     // records start time of button press
-        }
+  if (digitalRead(buttonPin) == LOW) {  
+    if (!buttonState) {
+      buttonState = true;     // acknowledges button press, prevents multiple actions from one button press
+      pressStartTime = millis();     // records start time of button press
+      }
 
-        if (!longPressDetected && millis() - pressStartTime > longPressDuration) {
-            buzzerMode = !buzzerMode;     // toggles between buzzer and LED
-            longPressDetected = true;
+    if (!longPressDetected && millis() - pressStartTime > longPressDuration) {
+      buzzerMode = !buzzerMode;     // toggles between buzzer and LED
+      longPressDetected = true;
+      }
+  } else {  
+    if (buttonState) {
+      if (!longPressDetected) {
+        if (!firstButtonClicked) {
+          recordStraightPosture();    // calls function to record straight posture x y z values
+          firstButtonClicked = true;
+        } else if (!initialized) {
+            recordSlouchPosture();    // if it is the second time short pressing button, record slouch x y z values
+            initialized = true;
+            threshold_angle = calculateThreshold();    // calculate threshold angle based on straight and slouch x y z readings
         }
-    } 
+      }
+      buttonState = false;
+      longPressDetected = false;
+    }
+}
+}

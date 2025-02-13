@@ -89,3 +89,21 @@ void getMPUData(float &x, float &y, float &z) {
     z = atan2(ax, ay) * 180 / PI;
 }
 
+void checkSlouch() {
+    getMPUData(current_x, current_y, current_z);
+    float currentAngle = (2.0 * abs(straight_x - current_x)) + 
+                         (1.0 * abs(straight_y - current_y)) + 
+                         (0.5 * abs(straight_z - current_z));
+
+    if (currentAngle >= threshold_angle) {
+        if (buzzerMode) {
+            digitalWrite(buzzerPin, HIGH);
+        } else {
+            digitalWrite(ledPin, HIGH);
+        }
+    } else {
+        digitalWrite(buzzerPin, LOW);
+        digitalWrite(ledPin, LOW);
+    }
+}
+
